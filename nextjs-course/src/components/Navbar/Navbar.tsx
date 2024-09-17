@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export const NavBar = ({className, ...props}: NavbarProps) =>{
     return(
-        <nav className={`flex flex-col h-screen bg-slate-900 border-r border-indigo-400/20 hover:border-indigo-400/80 w-72 p-2 text-slate-300 ${className}`} {...props}>
+        <nav className={`fixed top-0 left-0 flex flex-col h-screen bg-slate-900 border-r border-indigo-400/20 hover:border-indigo-400/80 w-72 p-2 text-slate-300 ${className}`} {...props}>
           <div className="flex items-center justify-center my-4">
             <Image 
               src="https://emersonbroga.com/e/assets/emersonbroga-logo-name-pink.png" 
