@@ -1,7 +1,12 @@
-import articles from '@/data/articles.json';
+import Article from '@/libs/database/Articles';
 import Image from 'next/image';
 
-export default function Home() {
+export default async function Home() {
+
+  const articles = await Article.get({ orderBy:{publishedAt: 'desc'}, limit: 14});
+  const highlightedArticles = articles.splice(0, 4);
+  const listArticles = articles.splice(4);
+
   return (
     <div className="ml-72">
       <div className="w-full h-[35vh] bg-orange-400 flex-center">
@@ -9,7 +14,7 @@ export default function Home() {
       </div>
       <div className="container mx-auto my-6">
         <div className="grid grid-cols-4 gap-4 h-[35vh]">
-          {articles.slice(-4).map((article) => {
+          {highlightedArticles.map((article) => {
               return (
               <div key={article.title} className='flex-center relative overflow-hidden'>
                 <div className='h-full w-full'>
@@ -30,7 +35,7 @@ export default function Home() {
       <div className="container mx-auto my-6">
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-8 flex flex-col gap-4">
-            {articles.map((article) => {
+            {listArticles.map((article) => {
               return (
                 <div className="flex bg-slate-800 rounded-md py-4" key={article.title}>
                   <div className='flex items-center'>
