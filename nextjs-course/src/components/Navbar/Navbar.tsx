@@ -1,52 +1,39 @@
 import { HomeIcon, GameIcon, TopIcon, WalkIcon, UserIcon } from "@/components";
-
-type NavbarProps = React.ComponentProps<"nav">;
-type NavbarListProps = React.ComponentProps<"ul">;
-type NavbarListItemsProps = React.ComponentProps<"li">;
-
-
-const NavbarList = ({children, className, ...props}: NavbarListProps) => {
-  return (
-    <ul className={`my-4 border-t border-indigo-400/20 hover:border-indigo-400/40 ${className}`} {...props}>
-      {children}
-    </ul>
-  );
-}
-
-const NavbarListItem = ({children, className, ...props}: NavbarListItemsProps) => {
-  return (
-    <li className={`my-2 rounded-lg px-2 bg-transparent hover:bg-indigo-400/40 hover:text-slate-100 cursor-pointer flex gap-2 items-center ${className}`} {...props}>
-      {children}
-    </li>
-  );
-}
-
-
+import { NavbarProps } from "./types";
+import { NavbarList } from "./NavbarList";
+import { NavBarListLink } from "./NavbarListLink";
+import Image from "next/image";
 
 export const NavBar = ({className, ...props}: NavbarProps) =>{
     return(
         <nav className={`flex flex-col h-screen bg-slate-900 border-r border-indigo-400/20 hover:border-indigo-400/80 w-72 p-2 text-slate-300 ${className}`} {...props}>
           <div className="flex items-center justify-center my-4">
-            <img src="https://emersonbroga.com/e/assets/emersonbroga-logo-name-pink.png" alt="Logo Emerson Broga" className="w-auto h-12 p-2"/>
+            <Image 
+              src="https://emersonbroga.com/e/assets/emersonbroga-logo-name-pink.png" 
+              alt="Logo Emerson Broga" 
+              className="w-auto h-12 p-2"
+              width={112}
+              height={32}
+            />
           </div>
           <NavbarList className={'flex-grow'}>
-            <NavbarListItem>
+            <NavBarListLink href="/">
               <HomeIcon className="h-4 w-4"/> Home
-            </NavbarListItem>
-            <NavbarListItem>
+            </NavBarListLink>
+            <NavBarListLink href="/games">
               <GameIcon className="h-4 w-4"/> Games
-            </NavbarListItem>
-            <NavbarListItem>
+            </NavBarListLink>
+            <NavBarListLink href="/top-10">
               <TopIcon className="h-4 w-4"/> Top 10
-            </NavbarListItem>
-            <NavbarListItem>
+            </NavBarListLink>
+            <NavBarListLink href="/walkthroughs">
               <WalkIcon className="h-4 w-4"/> Walkthroughs
-            </NavbarListItem>
+            </NavBarListLink>
           </NavbarList>
           <NavbarList>
-            <NavbarListItem>
+            <NavBarListLink href="/user">
               <UserIcon className="h-4 w-4"/> User
-            </NavbarListItem>
+            </NavBarListLink>
           </NavbarList>
         </nav>
     )
