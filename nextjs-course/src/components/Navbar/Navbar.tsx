@@ -2,12 +2,19 @@ import { HomeIcon, GameIcon, TopIcon, WalkIcon, UserIcon } from "@/components";
 import { NavbarProps } from "./types";
 import { NavbarList } from "./NavbarList";
 import { NavBarListLink } from "./NavbarListLink";
+import Image from "next/image";
 
 export const NavBar = ({className, ...props}: NavbarProps) =>{
     return(
         <nav className={`flex flex-col h-screen bg-slate-900 border-r border-indigo-400/20 hover:border-indigo-400/80 w-72 p-2 text-slate-300 ${className}`} {...props}>
           <div className="flex items-center justify-center my-4">
-            <img src="https://emersonbroga.com/e/assets/emersonbroga-logo-name-pink.png" alt="Logo Emerson Broga" className="w-auto h-12 p-2"/>
+            <Image 
+              src="https://emersonbroga.com/e/assets/emersonbroga-logo-name-pink.png" 
+              alt="Logo Emerson Broga" 
+              className="w-auto h-12 p-2"
+              width={112}
+              height={32}
+            />
           </div>
           <NavbarList className={'flex-grow'}>
             <NavBarListLink href="/">
