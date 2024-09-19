@@ -20,6 +20,10 @@ const Games = {
 
         return records;
     },
+    getOne: async({where}: {where: Pick<Games, 'id'> | Pick<Games, 'slug'>}) => {
+        const record = await prisma.games.findUnique({where});
+        return record;
+    },
     count: async ( {where = {}} ) => {
 
         const count = await prisma.games.count({
