@@ -1,6 +1,8 @@
 "use server";
 
+import {isValid, z, ZodError} from "zod";
 import UsersServices from "@/services/Users";
+import { error } from "console";
 
 export type SignUpError = {
     name?: string,
@@ -14,47 +16,84 @@ export type SignUpState = {
     errors: SignUpError
 }
 
-const validateSignUpForm = (formdata: FormData) => {
-    const errors: SignUpError = {
-        name: undefined,
-        email: undefined,
-        password: undefined,
-        passwordConfirmation: undefined,
-    }
+const getZodErros = (error: unknown) => {
+    const isZodError = error instanceof ZodError;
+    if(!isZodError) return null;
+    
+    const { fieldErrors } = error.flatten();
+    const errors = Object.keys(fieldErrors).reduce((acc, key) => {
+        const message = fieldErrors[key]?.at(0);
+        return {...acc, [key]: message};
+    }, {});
 
-    const name = String(formdata.get("name"));
-    const email = String(formdata.get("email"));
-    const password = String(formdata.get("password"));
-    const passwordConfirmation = String(formdata.get("passwordConfirmation"));
+    return errors;
+ 
+}
+
+const validateSignUpForm = (formdata: FormData) => {
+    const checkPasswords = (data: any) => data.password === data.passwordConfirmation;
+    const checkPasswordsErros = {message: "Passwords dont match", path: ["passwordConfirmation"]};
+
+    const userSchema = z.object({
+        name: z.string().min(3),
+        email: z.string().email(),
+        password: z.string().min(10),
+        passwordConfirmation: z.string().min(10),
+    }).refine(checkPasswords, checkPasswordsErros);
 
     try {
-        if(!name){
-            errors.name = "Name is required";
-        }
-
-        if(!email){
-            errors.email = "Emails is required";
-        }
-
-        if(!email.includes('@')){
-            errors.email = "Emails is not valid";
-        }
-
-        if(password.length < 10){
-            errors.password = "Password should have 10 chars";
-        }
-
-        if(!password || password !== passwordConfirmation){
-            errors.passwordConfirmation = "Password Confirmation doesnt match";
-        }
-
-        const isValid = Object.values(errors).every((value) => value === undefined);
+        userSchema.parse(Object.fromEntries(formdata));
+        return {isValid: true, errors: {}}
+    } catch (error: unknown) {
         
-        return {isValid, errors}
-    } catch (error) {
-        return {isValid: false, errors}
+        const zodErros = getZodErros(error)
+
+        return {isValid: false, errors: zodErros || {}}
+
     }
 }
+
+// const validateSignUpForm = (formdata: FormData) => {
+//     const errors: SignUpError = {
+//         name: undefined,
+//         email: undefined,
+//         password: undefined,
+//         passwordConfirmation: undefined,
+//     }
+
+//     const name = String(formdata.get("name"));
+//     const email = String(formdata.get("email"));
+//     const password = String(formdata.get("password"));
+//     const passwordConfirmation = String(formdata.get("passwordConfirmation"));
+
+//     try {
+//         if(!name){
+//             errors.name = "Name is required";
+//         }
+
+//         if(!email){
+//             errors.email = "Emails is required";
+//         }
+
+//         if(!email.includes('@')){
+//             errors.email = "Emails is not valid";
+//         }
+
+//         if(password.length < 10){
+//             errors.password = "Password should have 10 chars";
+//         }
+
+//         if(!password || password !== passwordConfirmation){
+//             errors.passwordConfirmation = "Password Confirmation doesnt match";
+//         }
+
+//         const isValid = Object.values(errors).every((value) => value === undefined);
+        
+//         return {isValid, errors}
+//     } catch (error) {
+//         return {isValid: false, errors}
+//     }
+// }
 
 export const handleSignUpForm = async (prevState: any, formData: FormData) => {
 
@@ -73,5 +112,5 @@ export const handleSignUpForm = async (prevState: any, formData: FormData) => {
     const record = await UsersServices.signUp(data);
     console.log('recotf', record);
 
-    return {...prevState, isValid: true}
+    return { isValid: true, errors: {}}
 }
