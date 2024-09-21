@@ -3,6 +3,8 @@
 import {isValid, z, ZodError} from "zod";
 import UsersServices from "@/services/Users";
 import { error } from "console";
+import { redirect } from "next/navigation";
+import { getZodErros } from "@/helpers/zod";
 
 export type SignUpError = {
     name?: string,
@@ -14,20 +16,6 @@ export type SignUpError = {
 export type SignUpState = {
     isValid?: boolean,
     errors: SignUpError
-}
-
-const getZodErros = (error: unknown) => {
-    const isZodError = error instanceof ZodError;
-    if(!isZodError) return null;
-    
-    const { fieldErrors } = error.flatten();
-    const errors = Object.keys(fieldErrors).reduce((acc, key) => {
-        const message = fieldErrors[key]?.at(0);
-        return {...acc, [key]: message};
-    }, {});
-
-    return errors;
- 
 }
 
 const validateSignUpForm = (formdata: FormData) => {
@@ -109,8 +97,6 @@ export const handleSignUpForm = async (prevState: any, formData: FormData) => {
         password: String(formData.get("password")),
     }
 
-    const record = await UsersServices.signUp(data);
-    console.log('recotf', record);
-
-    return { isValid: true, errors: {}}
+    await UsersServices.signUp(data);
+    redirect('/');
 }
