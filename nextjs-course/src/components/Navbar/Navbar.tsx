@@ -4,7 +4,7 @@ import { NavbarList } from "./NavbarList";
 import { NavBarListLink } from "./NavbarListLink";
 import Image from "next/image";
 
-export const NavBar = ({className, ...props}: NavbarProps) =>{
+export const NavBar = ({className, user, ...props}: NavbarProps) =>{
     return(
         <nav className={`fixed top-0 left-0 flex flex-col h-screen bg-slate-900 border-r border-indigo-400/20 hover:border-indigo-400/80 w-72 p-2 text-slate-300 ${className}`} {...props}>
           <div className="flex items-center justify-center my-4">
@@ -31,9 +31,15 @@ export const NavBar = ({className, ...props}: NavbarProps) =>{
             </NavBarListLink>
           </NavbarList>
           <NavbarList>
-            <NavBarListLink href="/user">
-              <UserIcon className="h-4 w-4"/> User
-            </NavBarListLink>
+            {user ? (
+              <NavBarListLink href="/user">
+                <UserIcon className="h-4 w-4"/> {user.name}
+              </NavBarListLink>
+            ): 
+              <NavBarListLink href="/auth/sign-in">
+                <UserIcon className="h-4 w-4"/> Login
+              </NavBarListLink>
+            }
           </NavbarList>
         </nav>
     )

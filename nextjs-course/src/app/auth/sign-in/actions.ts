@@ -4,6 +4,10 @@ import {isValid, z, ZodError} from "zod";
 import UsersServices from "@/services/Users";
 import { redirect } from "next/navigation";
 import { getZodErros } from "@/helpers/zod";
+import { encrypt } from "@/helpers/jwt";
+import { cookies } from "next/headers";
+import { createSession } from "@/helpers/session";
+import { revalidatePath } from "next/cache";
 
 export type SignInError = {
     email?: string,
@@ -21,7 +25,7 @@ const validateSignInForm = (formdata: FormData) => {
     
     const userSchema = z.object({
         email: z.string().email(),
-        password: z.string().min(10),
+        password: z.string().min(4),
     });
 
     try {
@@ -49,9 +53,17 @@ export const handleSignInForm = async (prevState: any, formData: FormData) => {
         password: String(formData.get("password")),
     }
 
-    // await UsersServices.signUp(data);
-    // redirect('/');
+    const user = await UsersServices.signIn(data);
+    if(!user) return {isValid: false, errors: {}};
 
-    console.log('data', data);
-    return {isValid: true, errors: {}};
+    const payload = {
+        uuid: user.uuid,
+        name: user.name,
+        email: user.email
+    }
+    const jwt = await encrypt(payload);
+    createSession(jwt);
+
+    revalidatePath("/");    
+    return redirect('/');
 }
