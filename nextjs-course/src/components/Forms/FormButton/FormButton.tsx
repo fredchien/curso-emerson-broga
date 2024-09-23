@@ -1,6 +1,6 @@
 export type FormButtonProps = React.ComponentProps<'button'> & {
-    label?: string | null | undefined;
-    action?: () => void;
+    label?: string | null;
+    action: () => void;
 }
 
 export default function FormButton({label, children, action, className, ...props}: FormButtonProps){
