@@ -4,7 +4,7 @@ import { decrypt, encrypt } from "@/helpers/jwt";
 const SESSION_NAME = 'session';
 
 const generateExpires = () => {
-    const expires = new Date(Date.now() + 60 * 1000);
+    const expires = new Date(Date.now() + 60 * 60 * 1000);
     return expires;
 }
 
@@ -36,4 +36,9 @@ export const updateSessions = async () => {
 
     return updateSession;
     
+}
+
+export const logout = async () => {
+    // destroy cookie
+    cookies().set(SESSION_NAME, '', {expires: new Date(0)});
 }

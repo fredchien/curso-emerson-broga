@@ -1,8 +1,10 @@
-import { HomeIcon, GameIcon, TopIcon, WalkIcon, UserIcon } from "@/components";
+import { HomeIcon, GameIcon, TopIcon, WalkIcon, UserIcon, FormButton, LogoutIcon } from "@/components";
 import { NavbarProps } from "./types";
 import { NavbarList } from "./NavbarList";
 import { NavBarListLink } from "./NavbarListLink";
 import Image from "next/image";
+import { NavbarListItem } from "./NavbarListItem";
+import { handleSingOutForm } from "@/app/auth/sign-out/actions";
 
 export const NavBar = ({className, user, ...props}: NavbarProps) =>{
     return(
@@ -30,17 +32,24 @@ export const NavBar = ({className, user, ...props}: NavbarProps) =>{
               <WalkIcon className="h-4 w-4"/> Walkthroughs
             </NavBarListLink>
           </NavbarList>
-          <NavbarList>
+          
             {user ? (
-              <NavBarListLink href="/user">
-                <UserIcon className="h-4 w-4"/> {user.name}
-              </NavBarListLink>
-            ): 
-              <NavBarListLink href="/auth/sign-in">
-                <UserIcon className="h-4 w-4"/> Login
-              </NavBarListLink>
+              <NavbarList>
+                <NavBarListLink href="/user">
+                  <UserIcon className="h-4 w-4"/> {user.name}
+                </NavBarListLink>
+                <NavbarListItem>
+                  <LogoutIcon className="h-4 w-4"/>
+                  <FormButton action={handleSingOutForm}>Logout</FormButton>
+                </NavbarListItem>
+              </NavbarList>
+            ):
+              <NavbarList> 
+                <NavBarListLink href="/auth/sign-in">
+                  <UserIcon className="h-4 w-4"/> Login
+                </NavBarListLink>
+              </NavbarList>  
             }
-          </NavbarList>
         </nav>
     )
 }
